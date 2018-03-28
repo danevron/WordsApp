@@ -47,13 +47,34 @@ Install the project dependencies
 
 Make sure Redis is running.
 
-To start the Rails API open a terminal window and run:
+To start the Rails API (on localhost:3000) open a terminal window and run:
 
     bundle exec rails server
 
 To start the background counting processing open a terminal window and run:
 
     bundle exec sidekiq
+
+## Example usage
+
+Counting is performed by issuing a POST request to `/count` endpoint.
+Example request
+
+```
+curl -X POST \
+http://localhost:3000/count \
+-H 'Cache-Control: no-cache' \
+-H 'Content-Type: application/json' \
+-d '{
+"text": "Text messaging, or texting, is the act of composing and sending electronic messages, typically consisting of alphabetic and numeric characters, between two or more users of mobile phones, tablets, desktops/laptops, or other devices."
+}'
+```
+
+Getting the number of word occurrences is performed by issuing a GET request to `/count` endpoint.
+
+```
+curl -X GET 'http://localhost:3000/count?word=two'
+```
 
 ## Testing
 
