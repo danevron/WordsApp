@@ -2,7 +2,6 @@ class CountsController < ApplicationController
   def show
     param! :word, String, required: true, format: /^[\w|-]*$/
 
-    binding.pry
     word_count = words_redis.get(word.downcase)
     render json: word_count || 0, status: 200
   end
