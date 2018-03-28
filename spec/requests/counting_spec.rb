@@ -1,20 +1,21 @@
 require 'rails_helper'
 
-RSpec.describe 'Words API', type: :request do
+RSpec.describe 'Counting API', type: :request do
+  let(:endpoint) { '/count' }
 
-  describe "POST words/count" do
-
+  describe "POST count" do
     context "when posted data is valid" do
       let(:valid_data) { { text: "sometext" } }
-      before { post '/words/count', params: valid_data }
 
-      it "returns status code 204" do
-        expect(response.status).to eq(204)
+      before { post endpoint, params: valid_data }
+
+      it "returns status code 200" do
+        expect(response.status).to eq(200)
       end
     end
 
     context "when posted data is not valid" do
-      before { post '/words/count', params: { not: "valid" } }
+      before { post endpoint, params: { not: "valid" } }
 
       it "returns status code 422" do
         expect(response.status).to eq(422)
@@ -26,7 +27,7 @@ RSpec.describe 'Words API', type: :request do
     end
 
     context "when no data is posted" do
-      before { post '/words/count' }
+      before { post endpoint }
 
       it "returns status code 422" do
         expect(response.status).to eq(422)
@@ -40,7 +41,7 @@ RSpec.describe 'Words API', type: :request do
 
   describe "GET words" do
     context "when no word is queried" do
-      before { get '/words' }
+      before { get endpoint }
 
       it "returns an error" do
         expect(json).to eq({ "validation_error" => "Parameter word is required" })
@@ -51,28 +52,9 @@ RSpec.describe 'Words API', type: :request do
       end
     end
 
-    context "when queried word was not processed" do
-      let(:word) { "not_present" }
-      before { get '/words', params: { word: word } }
-
-      it "returns 0" do
-        expect(json).to eq({ not_present: 0 })
-      end
-    end
-
-    context "when queried word is found" do
-      let(:word) { "found_5_times" }
-      before { get '/words', params: { word: word } }
-
-      it "returns it's statistics" do
-        expect(json).to eq({ found_5_times: 5 })
-      end
-    end
-
     ["with space", "with?", "with@"].each do |illigal_word|
-
       context "when queried word includes illegal characters such as '#{illigal_word}'" do
-        before { get '/words', { params: { word: "with space" } } }
+        before { get endpoint, { params: { word: "with space" } } }
 
         it "returns an error" do
           expect(json).to eq({ "validation_error" => "Parameter word must match format (?-mix:^[\\w|-]*$)" })
